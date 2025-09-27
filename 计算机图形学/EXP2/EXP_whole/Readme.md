@@ -1,1 +1,1 @@
-需要该结果动图的请联系我
+Please contact me if you need the gif of th results
