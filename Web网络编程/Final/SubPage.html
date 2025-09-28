@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusConnect - 首页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#FF7D00',
+            success: '#00B42A',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            info: '#86909C',
+            light: '#F2F3F5',
+            dark: '#1D2129',
+            // 黑暗主题颜色（新增）
+            'dark-bg': '#121212',
+            'dark-card': '#1E1E1E',
+            'dark-text': '#E0E0E0',
+            'dark-border': '#333333',
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+    .post-actions-menu {
+        position: absolute;
+        z-index: 20;
+        transition: opacity 0.2s, transform 0.2s;
+        will-change: opacity, transform;
+        min-width: 140px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* 防止菜单溢出处理 */
+    .post-actions-menu.overflow-top {
+        transform: translateY(-100%);
+    }
+    .post-actions-menu li {
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+    .post-actions-menu li i {
+        font-size: 0.9rem;
+    }
+    /* // 黑暗主题颜色（新增）主题切换过渡效果 */
+    .theme-transition {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    #main-post-box {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+
+  <style type="text/tailwindcss">
+        @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .input-focus {
+        @apply focus:ring-2 focus:ring-primary/50 focus:border-primary;
+      }
+      .form-control {
+        @apply block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-lg input-focus transition-all duration-200;
+      }
+      .btn {
+        @apply px-6 py-2.5 font-medium text-white rounded-lg transition-all duration-200;
+      }
+      .btn-primary {
+        @apply bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary/50 focus:outline-none;
+      }
+      .btn-secondary {
+        @apply bg-secondary hover:bg-secondary/90 focus:ring-2 focus:ring-secondary/50 focus:outline-none;
+      }
+      .password-strength-bar {
+        @apply h-1 rounded-full transition-all duration-300;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="sticky top-0 z-50 bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-2">
+          <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+            <i class="fa fa-graduation-cap text-white text-xl"></i>
+          </div>
+          <span class="text-xl font-bold text-primary">CampusConnect</span>
+        </a>
+        
+        <!-- 搜索框 - 桌面版 -->
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+          <div class="relative w-full">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fa fa-search text-gray-400"></i>
+            </div>
+            <input type="text" id="main-search-input" placeholder="搜索同学、动态、活动" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30">
+            <button id="main-search-button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-primary">
+                <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- 右侧操作区 -->
+        <div class="flex items-center space-x-1">
+          <!-- 通知图标 -->
+          <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+            <i class="fa fa-bell text-xl"></i>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+          </button>
+          
+          <!-- 消息图标 -->
+          <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+            <i class="fa fa-comment text-xl"></i>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+          </button>
+          
+          <!-- 登录注册按钮 -->
+          <button id="login-register-btn" class="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+            <i class="fa fa-sign-in"></i>
+            <span>登录/注册</span>
+          </button>
+
+          <!-- 用户信息区域 - 登录后显示，默认隐藏 -->
+          <div id="user-profile-nav" class="flex items-center space-x-2 hidden">
+            <img id="nav-avatar" src="" alt="用户头像" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+            <div class="hidden md:block">
+              <div id="nav-username" class="text-sm font-medium">加载中...</div>
+              <div id="nav-college" class="text-xs text-gray-500">加载中...</div>
+            </div>
+            <button id="user-menu-btn" class="p-2 text-gray-600 hover:text-primary transition-colors relative">
+              <i class="fa fa-angle-down"></i>
+            </button>
+            
+            <!-- 用户菜单 -->
+            <div id="user-menu" class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 hidden">
+              <a href="#" id="menu-personal-home" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i class="fa fa-user-o mr-2"></i> <span id="menu-username">个人主页</span>
+              </a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <i class="fa fa-cog mr-2"></i> 设置
+              </a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-danger hover:bg-gray-100">
+                <i class="fa fa-sign-out mr-2"></i> 退出登录
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- 左侧边栏 -->
+      <aside class="lg:w-64 shrink-0">
+        <div class="bg-white rounded-xl shadow-sm p-4 h-fit sticky top-20">
+          <nav class="space-y-1">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 text-primary bg-primary/5 rounded-lg">
+              <i class="fa fa-home text-lg"></i>
+              <span>首页</span>
+            </a>
+            <a href="#" id="follow-link" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-user-o text-lg"></i>
+              <span>关注</span>
+            </a>
+            <a href="#" id="like-link" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-compass text-lg"></i>
+              <span>点赞</span>
+            </a>
+            <a href="#" id="collect-link" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-calendar text-lg"></i>
+              <span>收藏</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-users text-lg"></i>
+              <span>私信</span>
+            </a>
+          </nav>
+          
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <h3 class="font-semibold mb-3">快速操作</h3>
+            <button id="post-modal-btn" class="w-full py-3 bg-primary text-white rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-dark transition-colors">
+              <i class="fa fa-pencil"></i>
+              <span>发布动态</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- 中间主内容区 -->
+      <div class="flex-1">
+        <!-- 动态发布框 -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6 animate-fadeIn" id="main-post-box">
+          <div class="flex space-x-3">
+            <img src="" alt="用户头像" class="w-12 h-12 rounded-full object-cover login-required">
+            <div class="flex-1">
+              <textarea placeholder="分享你的校园生活..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none h-24"></textarea>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1">
+                  <i class="fa fa-image text-primary"></i>
+                  <span class="picture">图片</span>
+                </button>
+                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1">
+                  <i class="fa fa-video-camera text-primary"></i>
+                  <span>视频</span>
+                </button>
+                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1">
+                  <i class="fa fa-map-marker text-primary"></i>
+                  <span>位置</span>
+                </button>
+                <button class="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1">
+                  <i class="fa fa-tags text-primary"></i>
+                  <span>话题</span>
+                </button>
+                <button class="ml-auto px-4 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary-dark transition-colors">
+                  发布
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 动态视图切换 -->
+        <div class="flex items-center justify-between mb-6 animate-fadeIn" style="animation-delay: 0.1s">
+          <h2 class="text-xl font-bold">动态</h2>
+          <div class="flex bg-white rounded-lg shadow-sm">
+            <button id="all-posts-btn" class="px-4 py-2 text-primary border-b-2 border-primary">
+              <i class="fa fa-user-friends mr-1"></i> 全站
+            </button>
+            <button id="followed-posts-btn" class="px-4 py-2 text-gray-500 hover:text-gray-700">
+              <i class="fa fa-globe mr-1"></i> 关注
+            </button>
+          </div>
+        </div>
+        
+        <!-- 动态卡片列表 -->
+        <div class="space-y-6" id="post-list">
+           <!-- 加载状态提醒 -->
+            <div id="loading-indicator" class="text-center py-16">
+              <i class="fa fa-spinner fa-spin text-primary text-3xl"></i>
+              <p class="mt-4 text-gray-600">加载中...</p>
+            </div>
+            <p id="no-posts" class="text-center py-16 text-gray-500 hidden">暂无动态，快去发布吧！</p>
+        </div>
+        
+        <!-- 加载更多 -->
+        <div class="text-center mt-8 hidden">
+            <button id="load-more" class="px-6 py-2.5 bg-white text-primary border border-primary rounded-lg hover:bg-primary-light transition-colors">
+                <i class="fa fa-refresh mr-1"></i> 加载更多动态
+            </button>
+        </div>
+      </div>
+      
+      <!-- 右侧边栏 -->
+      <aside class="lg:w-80 shrink-0">
+        <div class="bg-white rounded-xl shadow-sm p-4 h-fit sticky top-20">
+          <!-- 个人资料卡片 -->
+          <div class="mb-6 pb-6 border-b border-gray-100" id="user-profile-card">
+            <div class="flex items-center space-x-3">
+              <img id="sidebar-avatar" src="" alt="用户头像" class="w-14 h-14 rounded-full object-cover border-2 border-primary">
+              <div>
+                <h3 id="sidebar-username" class="font-bold">加载中...</h3>
+                <p id="sidebar-college" class="text-sm text-gray-500">加载中...</p>
+              </div>
+            </div>
+            <div class="flex space-x-4 mt-4" id="user-stats">
+              <div class="text-center">
+                <div class="font-bold text-primary" id="post-count">0</div>
+                <div class="text-xs text-gray-500">动态</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold text-primary" id="follow-count">0</div>
+                <div class="text-xs text-gray-500">关注</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold text-primary" id="follower-count">0</div>
+                <div class="text-xs text-gray-500">粉丝</div>
+              </div>
+            </div>
+            <button id="sidebar-personal-home" class="w-full mt-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary-light transition-colors text-sm">
+              <i class="fa fa-user-o mr-1"></i> 查看个人主页
+            </button>
+          </div>
+          
+          <!-- 推荐关注 -->
+          <div class="mb-6 pb-6 border-b border-gray-100">
+            <h3 class="font-semibold mb-3 flex items-center">
+              <span>推荐关注</span>
+            </h3>
+            <div id="recommend-loading" class="text-center py-8 hidden">
+              <i class="fa fa-spinner fa-spin text-primary"></i>
+              <p class="mt-2 text-gray-500">加载中...</p>
+            </div>
+            <div id="no-recommend" class="text-center py-8 text-gray-500 hidden">
+              <i class="fa fa-user-o text-2xl mb-2"></i>
+              <p>没有更多推荐</p>
+            </div>
+            <div id="recommend-users" class="space-y-4"></div>
+          </div>
+          
+          <!-- 热门话题 -->
+          <div class="mb-6 pb-6 border-b border-gray-100">
+            <h3 class="font-semibold mb-3 flex items-center justify-between">
+              <span>热门话题</span>
+              <a href="#" class="text-primary text-sm">查看更多</a>
+            </h3>
+            <div class="space-y-3">
+              <a href="#" class="block">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-primary font-medium">#校园美食分享#</p>
+                    <p class="text-xs text-gray-500">1.2万讨论</p>
+                  </div>
+                  <i class="fa fa-fire text-danger"></i>
+                </div>
+              </a>
+              <a href="#" class="block">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-primary font-medium">#期末备考攻略#</p>
+                    <p class="text-xs text-gray-500">8.5千讨论</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="block">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-primary font-medium">#社团招新季#</p>
+                    <p class="text-xs text-gray-500">6.3千讨论</p>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="block">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-primary font-medium">#我的校园生活#</p>
+                    <p class="text-xs text-gray-500">5.1千讨论</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+          <!-- 打卡日历 -->
+          <div>
+              <h3 class="font-semibold mb-3 flex items-center justify-between">
+                  <span>每日打卡</span>
+                  <span id="current-month-year" class="text-sm text-gray-500"></span>
+              </h3>
+              <div class="bg-gray-50 rounded-lg p-3">
+                  <!-- 月份导航 -->
+                  <div class="flex justify-between items-center mb-2">
+                      <button id="prev-month" class="text-gray-500 hover:text-primary">
+                          <i class="fa fa-chevron-left"></i>
+                      </button>
+                      <div id="calendar-title" class="text-sm text-gray-500"></div>
+                      <button id="next-month" class="text-gray-500 hover:text-primary">
+                          <i class="fa fa-chevron-right"></i>
+                      </button>
+                  </div>
+
+                  <!-- 星期标题 -->
+                  <div class="grid grid-cols-7 gap-1 text-xs mb-2">
+                      <div>日</div>
+                      <div>一</div>
+                      <div>二</div>
+                      <div>三</div>
+                      <div>四</div>
+                      <div>五</div>
+                      <div>六</div>
+                  </div>
+
+                  <!-- 日历格子 -->
+                  <div id="calendar-days" class="grid grid-cols-7 gap-1 text-sm">
+                      <!-- 日期将通过JS动态填充 -->
+                  </div>
+
+                  <!-- 打卡状态 -->
+                  <div class="mt-3 text-center">
+                      <div id="checkin-status" class="text-gray-500 text-sm mb-2">
+                          <!-- 显示用户打卡状态 -->
+                      </div>
+                      <button id="checkin-btn"
+                          class="w-full py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                          <i class="fa fa-check-circle mr-1"></i> 今日打卡
+                      </button>
+                  </div>
+
+                  <!-- 打卡统计 -->
+                  <div class="mt-3 flex justify-between text-xs text-gray-500">
+                      <div>本月已打卡: <span id="month-checkin-count">0</span> 天</div>
+                      <div>连续打卡: <span id="streak-count">0</span> 天</div>
+                  </div>
+              </div>
+          </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- 发布动态模态框 -->
+  <div id="post-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 animate-fadeIn">
+      <div class="p-5">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold">发布动态</h3>
+          <button id="close-post-modal" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <form class="space-y-4" id="post-form">
+          <div class="mb-4">
+            <textarea placeholder="分享你的校园生活..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none h-32"></textarea>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">添加图片 (可选)</label>
+            <div class="grid grid-cols-4 gap-2" id="image-upload-container">
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-primary transition-colors cursor-pointer image-upload">
+                <i class="fa fa-image text-gray-400 text-xl"></i>
+                <p class="text-xs text-gray-500 mt-1">添加图片</p>
+                <input type="file" class="hidden image-input" accept="image/*">
+              </div>
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-primary transition-colors cursor-pointer image-upload hidden">
+                <i class="fa fa-image text-gray-400 text-xl"></i>
+                <p class="text-xs text-gray-500 mt-1">添加图片</p>
+                <input type="file" class="hidden image-input" accept="image/*">
+              </div>
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-primary transition-colors cursor-pointer image-upload hidden">
+                <i class="fa fa-image text-gray-400 text-xl"></i>
+                <p class="text-xs text-gray-500 mt-1">添加图片</p>
+                <input type="file" class="hidden image-input" accept="image/*">
+              </div>
+              <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-primary transition-colors cursor-pointer image-upload hidden">
+                <i class="fa fa-image text-gray-400 text-xl"></i>
+                <p class="text-xs text-gray-500 mt-1">添加图片</p>
+                <input type="file" class="hidden image-input" accept="image/*">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-5 flex flex-wrap gap-2">
+            <button class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1 text-sm">
+              <i class="fa fa-map-marker text-primary"></i>
+              <span>添加位置</span>
+            </button>
+            <button class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center space-x-1 text-sm">
+              <i class="fa fa-tags text-primary"></i>
+              <span>添加话题</span>
+            </button>
+            <div class="flex-1 text-right">
+              <button type="button" id="post-cancel" class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition-colors">
+                取消
+              </button>
+              <button type="submit" class="px-4 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary-dark transition-colors ml-2">
+                发布
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关注列表模态框 -->
+  <div id="follow-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl mx-4 animate-fadeIn">
+      <div class="p-5">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold">我的关注</h3>
+          <button id="close-follow-modal" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4" id="follow-list">
+          <!-- 关注列表将通过JS动态添加 -->
+          <div class="text-center py-10 text-gray-500" id="no-follow">
+            <i class="fa fa-user-o text-4xl mb-3"></i>
+            <p>你还没有关注任何人</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-6" id="follow-loading" class="hidden">
+          <i class="fa fa-spinner fa-spin text-primary"></i>
+          <p class="mt-2 text-gray-500">加载中...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 点赞列表模态框 -->
+  <div id="like-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl mx-4 animate-fadeIn">
+      <div class="p-5">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold">点赞列表</h3>
+          <button id="close-like-modal" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4" id="like-list">
+          <!-- 点赞列表将通过JS动态添加 -->
+          <div class="text-center py-10 text-gray-500" id="no-like">
+            <i class="fa fa-heart-o text-4xl mb-3"></i>
+            <p>还没有点赞记录</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-6" id="like-loading" class="hidden">
+          <i class="fa fa-spinner fa-spin text-primary"></i>
+          <p class="mt-2 text-gray-500">加载中...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 收藏列表模态框 -->
+  <div id="collect-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl mx-4 animate-fadeIn">
+          <div class="p-5">
+              <div class="flex justify-between items-center mb-5">
+                  <h3 class="text-xl font-bold">我的收藏</h3>
+                  <button id="close-collect-modal" class="text-gray-400 hover:text-gray-600">
+                      <i class="fa fa-times"></i>
+                  </button>
+              </div>
+              
+              <div class="space-y-4" id="collect-list">
+                  <!-- 收藏列表将通过JS动态添加 -->
+                  <div class="text-center py-10 text-gray-500" id="no-collect">
+                      <i class="fa fa-bookmark-o text-4xl mb-3"></i>
+                      <p>你还没有收藏任何动态</p>
+                  </div>
+              </div>
+              
+              <div class="text-center mt-6" id="collect-loading" class="hidden">
+                  <i class="fa fa-spinner fa-spin text-primary"></i>
+                  <p class="mt-2 text-gray-500">加载中...</p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- 私信模态框 -->
+  <div id="message-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 animate-fadeIn flex">
+      <!-- 左侧：好友列表 -->
+      <div class="message-sidebar w-64 border-r border-gray-200">
+          <div class="p-4">
+              <!-- 搜索框（可选，可扩展搜索功能） -->
+              <div class="relative">
+                  <input type="text" placeholder="搜索好友"
+                      class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30">
+                  <div class="absolute right-2 top-2 text-gray-400">
+                      <i class="fa fa-search"></i>
+                  </div>
+              </div>
+          </div>
+          <!-- 动态好友列表容器 -->
+          <div id="friend-list" class="overflow-y-auto h-[500px]"></div>
+      </div>
+      <!-- 右侧：聊天窗口 -->
+      <div class="flex-1 flex flex-col">
+          <!-- 聊天头部（动态显示当前好友名称） -->
+          <div class="bg-gray-50 p-4 border-b border-gray-200 flex items-center justify-between">
+              <div class="flex items-center space-x-3" id="chat-header">
+                  <!-- 头像和名称将动态填充 -->
+                  <img src="" alt="当前聊天对象" class="w-10 h-10 rounded-full object-cover">
+                  <h3 class="font-bold" id="chat-title"></h3>
+              </div>
+              <button id="close-message-modal" class="text-gray-400 hover:text-gray-600">
+                  <i class="fa fa-times"></i>
+              </button>
+          </div>
+
+          <!-- 消息内容区（动态渲染聊天记录） -->
+          <div id="message-content" class="p-4 max-h-[400px] overflow-y-auto flex-1 space-y-4"></div>
+          <!-- 消息输入区（保留原有结构） -->
+          <div class="p-4 border-t border-gray-200">
+              <div class="flex items-center space-x-2">
+                  <button class="text-gray-400 hover:text-gray-600">
+                      <i class="fa fa-image"></i>
+                  </button>
+                  <input type="text" placeholder="输入消息..."
+                      class="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30">
+                  <button class="bg-primary text-white p-2 rounded-lg hover:bg-primary-dark transition-colors">
+                      <i class="fa fa-paper-plane"></i>
+                  </button>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <button id="theme-toggle" class="fixed bottom-6 left-6 z-40 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors">
+    <i class="fa fa-moon-o text-gray-600 dark:text-yellow-400"></i>
+  </button>
+
+  <!-- 登录注册模态框 -->
+  <div id="login-register-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+      <div class="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- 关闭按钮 -->
+        <button id="close-login-register-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+        </button>  
+        
+        <!-- 表单切换选项卡 -->
+          <div class="flex border-b">
+              <button id="loginTab"
+                  class="flex-1 py-4 text-lg font-medium text-primary border-b-2 border-primary">登录</button>
+              <button id="registerTab"
+                  class="flex-1 py-4 text-lg font-medium text-gray-500 border-b-2 border-transparent">注册</button>
+          </div>
+
+          <!-- 登录表单 -->
+          <div id="loginPanel" class="p-6">
+              <form id="loginForm" class="space-y-4">
+                  <div>
+                      <label for="loginEmail" class="block text-sm font-medium text-gray-700">邮箱</label>
+                      <input type="email" id="loginEmail" class="form-control" placeholder="your@email.com" required>
+                  </div>
+                  <div>
+                      <label for="loginPassword" class="block text-sm font-medium text-gray-700">密码</label>
+                      <div class="relative">
+                          <input type="password" id="loginPassword" class="form-control pr-10" placeholder="••••••••" required>
+                      </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                          <input id="rememberMe" type="checkbox"
+                              class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                          <label for="rememberMe" class="ml-2 block text-sm text-gray-700">记住我</label>
+                      </div>
+                      <a href="#" class="text-sm font-medium text-primary hover:text-primary/80">忘记密码?</a>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary w-full">登录</button>
+              </form>
+          </div>
+
+          <!-- 注册表单 -->
+          <div id="registerPanel" class="p-6 hidden">
+              <form id="registerForm" class="space-y-4">
+                  <!-- 头像上传 -->
+                  <div class="text-center mb-4">
+                      <div id="avatarPreview" class="w-24 h-24 mx-auto rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+                          <i class="fa fa-user text-6xl text-gray-400"></i>
+                          <img id="avatarImg" src="" alt="头像预览" class="w-full h-full object-cover hidden">
+                          <button id="removeAvatar" class="hidden absolute top-1 right-1 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center text-gray-600 hover:text-danger transition-colors">
+                              <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      <div class="mt-2">
+                          <label for="avatarUpload" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg cursor-pointer">
+                              <i class="fa fa-cloud-upload mr-2"></i>上传头像
+                          </label>
+                          <input id="avatarUpload" type="file" accept="image/*" class="hidden">
+                          <input type="hidden" id="avatarPath" value="">
+                      </div>
+                  </div>
+                  <div>
+                      <label for="registerName" class="block text-sm font-medium text-gray-700">昵称</label>
+                      <input type="text" id="registerName" class="form-control" placeholder="您的昵称" required>
+                  </div>
+
+
+                  <div>
+                      <label for="registerEmail" class="block text-sm font-medium text-gray-700">邮箱</label>
+                      <input type="email" id="registerEmail" class="form-control" placeholder="your@email.com" required>
+                  </div>
+
+                  <div>
+                      <label for="registerBio" class="block text-sm font-medium text-gray-700">个人简介</label>
+                      <textarea id="registerBio" rows="2" class="form-control" placeholder="简单介绍一下自己..."
+                          maxlength="200"></textarea>
+                  </div>
+                  <div>
+                      <label class="block text-sm font-medium text-gray-700">兴趣标签</label>
+                      <div class="flex flex-wrap gap-2 mt-2" id="interestTags">
+                          <input type="text" id="tagInput" class="form-control text-sm w-full" placeholder="添加标签，用逗号分隔">
+                      </div>
+                      <div class="flex flex-wrap gap-2 mt-2" id="selectedTags"></div>
+                  </div>
+                  <div>
+                      <label for="registerPassword" class="block text-sm font-medium text-gray-700">密码</label>
+                      <div class="relative">
+                          <input type="password" id="registerPassword" class="form-control pr-10" placeholder="••••••••" required>
+                      </div>
+
+                      <!-- 密码强度指示器 -->
+                      <div class="mt-2">
+                          <div class="flex justify-between text-xs text-gray-500 mb-1">
+                              <span id="passwordStrengthText">密码强度</span>
+                              <span id="passwordLength">0/8</span>
+                          </div>
+                          <div class="flex gap-1">
+                              <div id="strengthBar1" class="password-strength-bar w-1/4 bg-gray-200"></div>
+                              <div id="strengthBar2" class="password-strength-bar w-1/4 bg-gray-200"></div>
+                              <div id="strengthBar3" class="password-strength-bar w-1/4 bg-gray-200"></div>
+                              <div id="strengthBar4" class="password-strength-bar w-1/4 bg-gray-200"></div>
+                          </div>
+                      </div>
+                  </div>
+                  <div>
+                      <label for="registerConfirmPassword" class="block text-sm font-medium text-gray-700">确认密码</label>
+                      <input type="password" id="registerConfirmPassword" class="form-control" placeholder="••••••••" required>
+                  </div>
+
+                  <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                          <input id="terms" type="checkbox"
+                              class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" required>
+                      </div>
+                      <div class="ml-3 text-sm">
+                          <label for="terms" class="text-gray-600">我同意<a href="#"
+                                  class="text-primary hover:underline">服务条款</a>和<a href="#"
+                                  class="text-primary hover:underline">隐私政策</a></label>
+                      </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary w-full">注册</button>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <!-- 搜索结果模态框 -->
+  <div id="search-results-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 hidden animate-fadeIn">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+          <div class="p-5 border-b">
+              <div class="flex justify-between items-center">
+                  <h3 class="text-xl font-bold">搜索结果</h3>
+                  <button id="close-search-results-modal" class="text-gray-400 hover:text-gray-600">
+                      <i class="fa fa-times text-xl"></i>
+                  </button>
+              </div>
+          </div>
+
+          <div class="p-6 overflow-y-auto space-y-6">
+              <!-- 加载指示器 -->
+              <div id="search-loading-indicator" class="text-center py-8 hidden">
+                  <i class="fa fa-spinner fa-spin text-primary text-2xl"></i>
+                  <p class="mt-2 text-gray-500">正在搜索...</p>
+              </div>
+
+              <!-- 无结果提示 -->
+              <div id="no-search-results" class="text-center py-8 text-gray-500 hidden">
+                  <i class="fa fa-search-minus text-3xl mb-2"></i>
+                  <p>未能找到与 "<span id="searched-term-display"></span>" 相关的内容。</p>
+              </div>
+
+              <!-- 用户结果 -->
+              <div id="user-results-container" class="hidden">
+                  <h4 class="text-lg font-semibold mb-3 text-primary">相关用户</h4>
+                  <div id="user-results-list" class="space-y-3">
+                      <!-- 用户条目将动态插入这里 -->
+                  </div>
+              </div>
+
+              <!-- 动态结果 -->
+              <div id="post-results-container" class="hidden">
+                  <h4 class="text-lg font-semibold mb-3 text-primary">相关动态</h4>
+                  <div id="post-results-list" class="space-y-4">
+                      <!-- 动态条目将动态插入这里 -->
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <!-- JavaScript -->
+  <script src="load.js"></script>
+</body>
+</html>

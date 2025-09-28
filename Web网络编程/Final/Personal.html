@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusConnect - 个人主页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#FF7D00',
+            success: '#00B42A',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            info: '#86909C',
+            light: '#F2F3F5',
+            dark: '#1D2129',
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-slideIn {
+        animation: slideIn 0.3s ease-in-out;
+      }
+      @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="sticky top-0 z-50 bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="subpage.html" class="flex items-center space-x-2">
+          <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+            <i class="fa fa-graduation-cap text-white text-xl"></i>
+          </div>
+          <span class="text-xl font-bold text-primary">CampusConnect</span>
+        </a>
+
+        <!-- 搜索框 - 桌面版 -->
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+          <div class="relative w-full">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fa fa-search text-gray-400"></i>
+            </div>
+            <input type="text" placeholder="搜索同学、动态、活动"
+              class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30">
+          </div>
+        </div>
+
+        <!-- 右侧操作区 -->
+        <div class="flex items-center space-x-1">
+          <!-- 通知图标 -->
+          <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+            <i class="fa fa-bell text-xl"></i>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+          </button>
+
+          <!-- 消息图标 -->
+          <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+            <i class="fa fa-comment text-xl"></i>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+          </button>
+
+          <!-- 用户头像 (这部分可以保持静态，或在登录后动态更新) -->
+          <div class="relative">
+            <button id="user-menu-button" class="flex items-center space-x-2">
+              <img src=""alt="用户头像" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+              <span class="hidden md:inline font-medium"></span>
+              <i class="fa fa-angle-down text-gray-500"></i>
+            </button>
+            <div id="user-menu"
+              class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 animate-fadeIn">
+              <a href="profile.html" class="block px-4 py-2 text-sm text-primary bg-primary/5 hover:bg-primary/10">
+                <i class="fa fa-user-o mr-2"></i> 个人主页
+              </a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fa fa-cog mr-2"></i>
+                设置</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i
+                  class="fa fa-question-circle mr-2"></i> 帮助中心</a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" class="block px-4 py-2 text-sm text-danger hover:bg-gray-100"><i
+                  class="fa fa-sign-out mr-2"></i> 退出登录</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 个人资料头部 -->
+  <section class="relative bg-primary text-white py-12 md:py-20">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full"></div>
+      <div class="absolute top-1/3 -left-20 w-60 h-60 bg-white rounded-full"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="flex flex-col items-center">
+          <div class="relative mb-6">
+            <img src="https://picsum.photos/id/1/200/200" alt="用户头像" id="profile-header-avatar"
+              class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg">
+            <button
+              class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary border-2 border-white flex items-center justify-center text-white hover:bg-primary-dark transition-colors">
+              <i class="fa fa-camera"></i>
+            </button>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold mb-2" id="profile-name">加载中...</h1>
+          <p class="text-white/80 mb-4" id="profile-school-info">...</p>
+          <div class="flex space-x-4 mb-6">
+            <div class="text-center">
+              <div class="text-2xl font-bold" id="profile-post-count">0</div>
+              <div class="text-white/80">动态</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold" id="profile-following-count">0</div>
+              <div class="text-white/80">关注</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold" id="profile-follower-count">0</div>
+              <div class="text-white/80">粉丝</div>
+            </div>
+          </div>
+          <button id="edit-profile-btn"
+            class="px-6 py-2 bg-white text-primary font-medium rounded-lg hover:bg-gray-100 transition-colors hidden">
+            <i class="fa fa-edit mr-1"></i> 编辑资料
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- 左侧边栏 -->
+      <aside class="lg:w-64 shrink-0">
+        <div class="bg-white rounded-xl shadow-sm p-4 h-fit sticky top-20">
+          <nav class="space-y-1">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 text-primary bg-primary/5 rounded-lg">
+              <i class="fa fa-file-text-o text-lg"></i>
+              <span>TA的动态</span>
+            </a>
+            <a href="#"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-heart-o text-lg"></i>
+              <span>TA的点赞</span>
+            </a>
+            <a href="#"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-bookmark-o text-lg"></i>
+              <span>TA的收藏</span>
+            </a>
+            <a href="#"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa fa-users text-lg"></i>
+              <span>关注列表</span>
+            </a>
+          </nav>
+
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <h3 class="font-semibold mb-3">个人信息</h3>
+            <div class="space-y-3">
+              <div class="flex items-center space-x-3">
+                <i class="fa fa-envelope text-gray-400 w-5 text-center"></i>
+                <span class="text-gray-700" id="profile-email">...</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fa fa-phone text-gray-400 w-5 text-center"></i>
+                <span class="text-gray-700" id="profile-phone">...</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fa fa-graduation-cap text-gray-400 w-5 text-center"></i>
+                <span class="text-gray-700" id="profile-major">...</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <i class="fa fa-calendar text-gray-400 w-5 text-center"></i>
+                <span class="text-gray-700" id="profile-enrollment">...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 中间主内容区 -->
+      <div class="flex-1">
+        <div class="flex items-center justify-between mb-6 animate-fadeIn" style="animation-delay: 0.1s">
+          <h2 class="text-xl font-bold">TA的动态</h2>
+        </div>
+
+        <div class="space-y-6" id="profile-post-list">
+          <!-- 加载状态提醒 -->
+          <div id="loading-indicator" class="text-center py-16">
+            <i class="fa fa-spinner fa-spin text-primary text-3xl"></i>
+            <p class="mt-4 text-gray-600">正在加载用户数据...</p>
+          </div>
+          <p id="no-posts" class="text-center py-16 text-gray-500 hidden">这位用户很懒，什么动态都还没发~</p>
+        </div>
+
+      </div>
+
+      <!-- 右侧边栏 -->
+      <aside class="lg:w-80 shrink-0">
+        <div class="bg-white rounded-xl shadow-sm p-4 h-fit sticky top-20">
+          <div class="mb-6 pb-6 border-b border-gray-100">
+            <h3 class="font-semibold mb-3">个人简介</h3>
+            <p class="text-gray-700 mb-4" id="profile-bio">加载中...</p>
+            <div class="flex flex-wrap gap-2" id="profile-interests-tags">
+              <!-- 兴趣标签将动态加载到这里 -->
+            </div>
+          </div>
+          <!-- 其他右侧内容可以保持静态或后续动态化 -->
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- [替换为这个新的] 编辑动态弹窗 (Modal) -->
+  <div id="edit-post-modal"
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 hidden animate-fadeIn">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 animate-slideIn">
+      <div class="p-5 border-b">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">编辑动态</h3>
+          <button id="close-edit-post-modal" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times text-xl"></i>
+          </button>
+        </div>
+      </div>
+      <form id="edit-post-form" class="p-6 space-y-4">
+        <input type="hidden" id="edit-post-id" name="postId">
+
+        <div>
+          <label for="edit-post-content" class="block text-sm font-medium text-gray-700">动态内容</label>
+          <textarea id="edit-post-content" name="content" rows="4"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary resize-none"></textarea>
+        </div>
+
+        <!-- [新增] 图片编辑区 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">管理图片</label>
+          <div id="edit-image-preview-container" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            <!-- JS将在这里动态填充图片预览和上传框 -->
+          </div>
+          <input type="file" id="edit-image-input" class="hidden" multiple accept="image/*">
+        </div>
+
+        <div class="pt-4 flex justify-end gap-3">
+          <button type="button" id="cancel-edit-post-btn"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">取消</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+            <span class="submit-text">保存更改</span>
+            <span class="loading-spinner hidden"><i class="fa fa-spinner fa-spin mr-2"></i>正在保存...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- [新增] 编辑资料弹窗 (Modal) -->
+  <div id="edit-profile-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-fadeIn">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 animate-slideIn">
+      <div class="p-5 border-b">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold">编辑个人资料</h3>
+          <button id="close-edit-modal" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <form id="edit-profile-form" class="p-6 space-y-4">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-username" class="block text-sm font-medium text-gray-700">昵称</label>
+            <input type="text" id="edit-username" name="username"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+          <div>
+            <label for="edit-gender" class="block text-sm font-medium text-gray-700">性别</label>
+            <input type="text" id="edit-gender" name="gender"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-email" class="block text-sm font-medium text-gray-700">邮箱</label>
+            <input type="email" id="edit-email" name="email"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+          <div>
+            <label for="edit-phone" class="block text-sm font-medium text-gray-700">电话</label>
+            <input type="tel" id="edit-phone" name="phone_number"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-school" class="block text-sm font-medium text-gray-700">大学/学院/年级</label>
+            <input type="text" id="edit-school" name="school_info"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+          <div>
+            <label for="edit-enrollment" class="block text-sm font-medium text-gray-700">入学日期</p>
+              <input type="date" id="edit-enrollment" name="enrollment_date"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary">
+          </div>
+        </div>
+
+        <div>
+          <label for="edit-bio" class="block text-sm font-medium text-gray-700">个人简介</label>
+          <textarea id="edit-bio" name="bio" rows="3"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary"></textarea>
+        </div>
+
+        <div class="pt-4 flex justify-end gap-3">
+          <button type="button" id="cancel-edit-btn"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">取消</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">保存更改</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // --- DOM元素获取 (新增了编辑动态弹窗的元素) ---
+      const postListContainer = document.getElementById('profile-post-list');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const noPostsMessage = document.getElementById('no-posts');
+      const editProfileBtn = document.getElementById('edit-profile-btn');
+      const editProfileModal = document.getElementById('edit-profile-modal');
+      const closeEditModalBtn = document.getElementById('close-edit-modal'); // [!] 已在此处补全
+      const cancelEditBtn = document.getElementById('cancel-edit-btn');
+      const editProfileForm = document.getElementById('edit-profile-form');
+      const editPostModal = document.getElementById('edit-post-modal');
+      const editPostForm = document.getElementById('edit-post-form');
+      const editPostContent = document.getElementById('edit-post-content');
+      const editPostIdInput = document.getElementById('edit-post-id');
+      const closeEditPostModalBtn = document.getElementById('close-edit-post-modal');
+      const cancelEditPostBtn = document.getElementById('cancel-edit-post-btn');
+      const editImagePreviewContainer = document.getElementById('edit-image-preview-container');
+      const editImageInput = document.getElementById('edit-image-input');
+      let currentEditingPost = null; // 用于存储正在编辑的帖子的完整数据
+      // --- 全局变量 ---
+      let currentUserData = null;
+      const urlParams = new URLSearchParams(window.location.search);
+      const profileUserId = urlParams.get('userId');
+      const loggedInUser = urlParams.get('LoginUserId');
+      const loggedAvatarUrl = urlParams.get('LoginAvatarURL');
+      const loggedUsername = urlParams.get('LoginUserName');
+
+      const userMenuButton = document.getElementById('user-menu-button');
+      const avatarImg = userMenuButton.querySelector('img');
+      const usernameSpan = userMenuButton.querySelector('span');
+      console.log(loggedUsername,loggedAvatarUrl);
+      usernameSpan.textContent = loggedUsername;
+      avatarImg.src = loggedAvatarUrl;
+      avatarImg.alt = loggedUsername;
+      
+
+      const authToken = localStorage.getItem('authToken');
+      const savedUser = localStorage.getItem('userInfo');
+
+      if (!profileUserId) {
+        document.body.innerHTML = '<div class="text-center text-danger p-10">错误：缺少用户ID。</div>';
+        return;
+      }
+      // [修复] 补全 populateProfile 函数的定义
+      function populateProfile(user) {
+        if (!user) return; // 安全检查
+
+        // 头部信息
+        document.getElementById('profile-header-avatar').src = user.avatar_url || 'https://via.placeholder.com/200';
+        document.getElementById('profile-name').textContent = user.username || '未知用户';
+        document.getElementById('profile-school-info').textContent = user.school_info || '学校信息未填写';
+        document.getElementById('profile-post-count').textContent = user.post_count || 0;
+        document.getElementById('profile-follower-count').textContent = user.follower_count || 0;
+        document.getElementById('profile-following-count').textContent = user.following_count || 0;
+
+        // 左侧栏个人信息
+        document.getElementById('profile-email').textContent = user.email || '未提供';
+        document.getElementById('profile-phone').textContent = user.phone_number || '未提供';
+        document.getElementById('profile-major').textContent = user.school_info || '未提供';
+        document.getElementById('profile-enrollment').textContent = user.enrollment_date ? `入学于 ${new Date(user.enrollment_date).toLocaleDateString('zh-CN')}` : '未提供';
+
+        // 右侧栏简介
+        document.getElementById('profile-bio').textContent = user.bio || '这位用户很神秘，什么简介都没写。';
+
+        // 兴趣标签 (假设 interests_tags 是一个逗号分隔的字符串)
+        const tagsContainer = document.getElementById('profile-interests-tags');
+        tagsContainer.innerHTML = ''; // 清空旧标签
+        if (user.interests_tags) {
+          user.interests_tags.split(',').forEach(tag => {
+            const tagEl = document.createElement('span');
+            tagEl.className = 'px-2 py-1 bg-primary/10 text-primary text-sm rounded-md';
+            tagEl.textContent = tag.trim();
+            tagsContainer.appendChild(tagEl);
+          });
+        }
+      }
+
+      // [修复] 补全 setupEditButton 函数的定义
+      function setupEditButton() {
+        // 检查当前页面查看的用户ID是否与登录用户ID一致
+        if (profileUserId === loggedInUser) {
+          editProfileBtn.classList.remove('hidden'); // 显示"编辑资料"按钮
+        }
+      }
+
+      // [修复] 补全编辑资料弹窗的事件监听
+      function setupEditProfileModal() {
+        // 打开弹窗
+        editProfileBtn.addEventListener('click', () => {
+          if (!currentUserData) return;
+          // 填充表单
+          document.getElementById('edit-username').value = currentUserData.username || '';
+          document.getElementById('edit-gender').value = currentUserData.gender || '';
+          document.getElementById('edit-email').value = currentUserData.email || '';
+          document.getElementById('edit-phone').value = currentUserData.phone_number || '';
+          document.getElementById('edit-school').value = currentUserData.school_info || '';
+          // 日期需要格式化为 YYYY-MM-DD
+          document.getElementById('edit-enrollment').value = currentUserData.enrollment_date ? currentUserData.enrollment_date.split('T')[0] : '';
+          document.getElementById('edit-bio').value = currentUserData.bio || '';
+
+          editProfileModal.classList.remove('hidden');
+        });
+
+        // 关闭弹窗
+        const closeProfileModal = () => editProfileModal.classList.add('hidden');
+        closeEditModalBtn.addEventListener('click', closeProfileModal);
+        cancelEditBtn.addEventListener('click', closeProfileModal);
+
+        // 提交表单
+        editProfileForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(editProfileForm);
+          formData.append('userId', profileUserId); // 必须告诉后端要更新哪个用户
+          console.log('提交的表单数据:', Object.fromEntries(formData.entries()));
+          try {
+            const response = await fetch('http://localhost:3000/api/user/update', {
+              method: 'PUT',
+              body: formData
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || '更新失败');
+
+            alert('资料更新成功！');
+            closeProfileModal();
+
+            // [重要] 使用后端返回的最新数据更新页面，而不是刷新
+            currentUserData = result.updatedUser;
+            populateProfile(currentUserData);
+
+          } catch (error) {
+            alert(`更新失败: ${error.message}`);
+          }
+        });
+      }
+      // [核心修改] 渲染用户的帖子列表
+      function renderPosts(posts, user) {
+        if (posts.length === 0) {
+          noPostsMessage.classList.remove('hidden');
+          return;
+        }
+        postListContainer.innerHTML = '';
+
+        posts.forEach((post, index) => {
+          const postItem = document.createElement('div');
+          postItem.className = 'bg-white rounded-xl shadow-sm overflow-hidden animate-fadeIn';
+          // 给每个帖子容器添加一个唯一的ID，方便后续更新内容
+          postItem.id = `post-item-${post.post_id}`;
+
+          // --- 权限判断，动态生成操作菜单 ---
+          let optionsHtml = '';
+          console.log('当前登录用户ID:', loggedInUser, '帖子作者ID:', post.user_id);
+          // 如果帖子的作者ID === 当前登录用户的ID
+          if (post.user_id == loggedInUser) {
+            // 显示带"编辑"和"删除"的菜单
+            // 我们将帖子的ID和原始内容存在data-*属性中，方便JS获取
+            optionsHtml = `
+                <div class="relative post-options-menu">
+                    <button class="toggle-options-btn p-2 rounded-full hover:bg-gray-100 text-gray-500">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </button>
+                    <div class="options-dropdown hidden absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-1 z-10">
+                        <a href="#" class="edit-post-btn block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                           data-post-id="${post.post_id}">
+                           <i class="fa fa-pencil mr-2"></i>编辑
+                        </a>
+                        <a href="#" class="delete-post-btn block px-4 py-2 text-sm text-danger hover:bg-gray-100" 
+                           data-post-id="${post.post_id}">
+                           <i class="fa fa-trash-o mr-2"></i>删除
+                        </a>
+                    </div>
+                </div>
+                `;
+          } else {
+            // 否则，只显示一个分享按钮
+            optionsHtml = `
+                <button class="flex items-center space-x-1 text-gray-500 hover:text-primary transition-colors">
+                    <i class="fa fa-share-alt"></i> <span>分享</span>
+                </button>
+                `;
+          }
+          // --- 权限判断结束 ---
+
+          // ... (解析media_url的代码保持不变)
+          let mediaHtml = '';
+          let mediaUrls = [];
+          if (post.media_url) {
+            try {
+              // 后端应该返回的是一个JSON字符串数组，如 '["/uploads/img1.png", "/uploads/img2.png"]'
+              // 或者已经是JS数组了
+              mediaUrls = (typeof post.media_url === 'string') ? JSON.parse(post.media_url) : post.media_url;
+            } catch (e) {
+              console.error('解析media_url失败:', post.media_url, e);
+              mediaUrls = [];
+            }
+          }
+          if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+            const gridClass = mediaUrls.length === 1 ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3';
+            // 对每个URL进行处理，确保它是完整的
+            mediaHtml = `<div class="grid ${gridClass} gap-2 mt-3 mb-3 rounded-lg overflow-hidden">
+                ${mediaUrls.map(url => {
+              // 判断URL是否已经是完整的http地址
+              const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`;
+              return `<img src="${fullUrl}" class="w-full h-full aspect-square object-cover" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found'">`
+            }).join('')}
+            </div>`;
+          }
+
+          const postDate = new Date(post.created_at).toLocaleString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+          postItem.innerHTML = `
+              <div class="p-5">
+                <div class="flex items-start space-x-3 mb-3">
+                  <img src="${user.avatar_url}" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+                  <div class="flex-1">
+                    <h4 class="font-medium">${user.username}</h4>
+                    <p class="text-xs text-gray-500">${postDate}</p>
+                  </div>
+                  <!-- 这里使用我们动态生成的 optionsHtml -->
+                  ${optionsHtml} 
+                </div>
+                <!-- 给帖子内容p标签加一个class，方便之后定位更新 -->
+                <p class="text-gray-700 post-content-text">${post.content}</p>
+                ${mediaHtml}
+                <div class="flex items-center justify-between text-gray-500 mt-4">
+                  <div class="flex space-x-6">
+                    <button class="flex items-center space-x-1 hover:text-primary transition-colors"><i class="fa fa-heart-o"></i> <span>${post.like_count}</span></button>
+                    <button class="flex items-center space-x-1 hover:text-primary transition-colors"><i class="fa fa-comment-o"></i> <span>${post.comment_count}</span></button>
+                  </div>
+                </div>
+              </div>
+            `;
+          postListContainer.appendChild(postItem);
+        });
+      }
+      // 渲染编辑弹窗中的图片预览
+      function renderEditImagePreviews(imageUrls = []) {
+        editImagePreviewContainer.innerHTML = '';
+
+        // 1. 渲染已有的图片
+        imageUrls.forEach(url => {
+          const previewEl = document.createElement('div');
+          previewEl.className = 'relative aspect-square';
+          previewEl.innerHTML = `
+            <img src="${url}" class="w-full h-full object-cover rounded-lg">
+            <button type="button" class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors remove-existing-image" data-url="${url}">
+                <i class="fa fa-times"></i>
+            </button>
+        `;
+          editImagePreviewContainer.appendChild(previewEl);
+        });
+
+        // 2. 添加 "添加图片" 的按钮
+        const addBtn = document.createElement('div');
+        addBtn.className = 'flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary aspect-square';
+        addBtn.innerHTML = `<div class="text-center text-gray-500"><i class="fa fa-plus text-2xl"></i><p class="text-sm mt-1">添加</p></div>`;
+        addBtn.addEventListener('click', () => editImageInput.click());
+        editImagePreviewContainer.appendChild(addBtn);
+
+        // 绑定删除事件
+        editImagePreviewContainer.querySelectorAll('.remove-existing-image').forEach(btn => {
+          btn.addEventListener('click', () => {
+            btn.parentElement.remove(); // 直接从DOM移除
+          });
+        });
+      }
+
+      // 监听文件输入框的变化
+      editImageInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const previewEl = document.createElement('div');
+            previewEl.className = 'relative aspect-square';
+            // 标记这是一个新文件
+            previewEl.dataset.newFile = 'true';
+            // 将文件对象暂存起来
+            previewEl._file = file;
+
+            previewEl.innerHTML = `
+                <img src="${event.target.result}" class="w-full h-full object-cover rounded-lg">
+                <button type="button" class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 transition-colors remove-new-image">
+                    <i class="fa fa-times"></i>
+                </button>
+            `;
+            // 将新图片预览插入到“添加”按钮之前
+            editImagePreviewContainer.lastChild.before(previewEl);
+          }
+          reader.readAsDataURL(file);
+        }
+        // 清空input的值，以便可以再次选择相同的文件
+        e.target.value = '';
+      });
+
+      // 使用事件委托处理新上传图片的删除
+      editImagePreviewContainer.addEventListener('click', (e) => {
+        if (e.target.closest('.remove-new-image')) {
+          e.target.closest('.relative').remove();
+        }
+      });
+      // [核心新增] 设置弹窗和表单的事件监听
+      function setupAllListeners() {
+        // --- 编辑个人资料的弹窗逻辑 (不变) ---
+        editProfileBtn.addEventListener('click', () => { /* ... 省略，保持原样 ... */ });
+        // ... 其他编辑个人资料的逻辑 ...
+
+        // --- 新增：编辑动态的弹窗和菜单逻辑 ---
+        const closePostModal = () => editPostModal.classList.add('hidden');
+        closeEditPostModalBtn.addEventListener('click', closePostModal);
+        cancelEditPostBtn.addEventListener('click', closePostModal);
+
+        // 使用事件委托来处理所有帖子的操作菜单
+        postListContainer.addEventListener('click', function (e) {
+          const toggleBtn = e.target.closest('.toggle-options-btn');
+          const editBtn = e.target.closest('.edit-post-btn');
+          // [新增] 获取删除按钮
+          const deleteBtn = e.target.closest('.delete-post-btn');
+          // 点击 ... 按钮，切换下拉菜单的显示/隐藏
+          if (toggleBtn) {
+            const dropdown = toggleBtn.nextElementSibling;
+            dropdown.classList.toggle('hidden');
+          }
+
+          // 点击 "编辑" 按钮
+          if (editBtn) {
+            e.preventDefault();
+            const postId = editBtn.dataset.postId;
+
+            // 从 posts 数组中找到完整的帖子数据 (需要在<script>顶部声明一个全局变量 let allPosts = [];)
+            // 假设在 loadProfileData 成功后, const data = response.json(); allPosts = data.userPosts;
+            // 这里为了简化，我们直接从DOM获取需要的信息
+            const postItem = document.getElementById(`post-item-${postId}`);
+            const currentContent = postItem.querySelector('.post-content-text').textContent;
+            const imageElements = postItem.querySelectorAll('.grid img');
+            const imageUrls = Array.from(imageElements).map(img => img.src);
+
+            currentEditingPost = { id: postId, content: currentContent, images: imageUrls };
+
+            // 填充弹窗表单
+            editPostIdInput.value = postId;
+            editPostContent.value = currentContent;
+
+            // [新增] 渲染图片预览区
+            renderEditImagePreviews(imageUrls);
+
+            // 显示编辑弹窗
+            editPostModal.classList.remove('hidden');
+
+            editBtn.closest('.options-dropdown').classList.add('hidden');
+          }
+
+          if (deleteBtn) {
+            e.preventDefault();
+            const postId = deleteBtn.dataset.postId;
+
+            // 弹出一个确认框，防止误删
+            if (confirm('您确定要删除这条动态吗？此操作无法撤销。')) {
+              // 调用删除函数
+              deletePost(postId);
+            }
+
+            // 关闭可能还开着的下拉菜单
+            deleteBtn.closest('.options-dropdown').classList.add('hidden');
+          }
+        });
+
+        editPostForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const submitBtn = e.target.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.querySelector('.submit-text').classList.add('hidden');
+          submitBtn.querySelector('.loading-spinner').classList.remove('hidden');
+
+          // 使用 FormData 来处理文件和文本数据
+          const formData = new FormData();
+          formData.append('postId', editPostIdInput.value);
+          formData.append('content', editPostContent.value.trim());
+          formData.append('loggedInUserId', loggedInUser);
+
+          // 1. 收集需要保留的旧图片URL
+          const existingImageUrls = [];
+          editImagePreviewContainer.querySelectorAll('.remove-existing-image').forEach(btn => {
+            existingImageUrls.push(btn.dataset.url);
+          });
+          // 将数组转为JSON字符串发送
+          formData.append('existingImages', JSON.stringify(existingImageUrls));
+
+          // 2. 收集新上传的图片文件
+          const newImageElements = editImagePreviewContainer.querySelectorAll('div[data-new-file="true"]');
+          newImageElements.forEach(el => {
+            if (el._file) {
+              formData.append('newImages', el._file);
+            }
+          });
+
+          try {
+            const response = await fetch(`http://localhost:3000/api/post/update`, {
+              method: 'PUT',
+              // 注意：当使用 FormData 时，不要手动设置 'Content-Type' header
+              // 浏览器会自动设置，并包含正确的 boundary
+              body: formData
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || '更新失败');
+
+            alert('动态更新成功！');
+            closePostModal();
+
+            // 简单粗暴但有效的方式：重新加载整个页面或用户数据
+            // 因为图片和内容都变了，局部更新会很复杂
+            location.reload();
+            // 或者调用 loadProfileData();
+
+          } catch (error) {
+            console.error('更新动态失败:', error);
+            alert(`更新失败: ${error.message}`);
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.querySelector('.submit-text').classList.remove('hidden');
+            submitBtn.querySelector('.loading-spinner').classList.add('hidden');
+          }
+        });
+
+        // 点击页面其他地方，关闭所有打开的下拉菜单
+        document.addEventListener('click', function (e) {
+          if (!e.target.closest('.post-options-menu')) {
+            document.querySelectorAll('.options-dropdown').forEach(d => d.classList.add('hidden'));
+          }
+        });
+      }
+
+      // [新增] 一个独立的删除帖子函数
+      async function deletePost(postId) {
+        try {
+          const response = await fetch(`http://localhost:3000/api/post/delete`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              postId: postId,
+              loggedInUserId: loggedInUser
+            })
+          });
+
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || '删除失败');
+          }
+
+          alert('动态删除成功！');
+
+          // 从页面上移除对应的帖子元素
+          const postItemToRemove = document.getElementById(`post-item-${postId}`);
+          if (postItemToRemove) {
+            // 添加一个淡出动画效果
+            postItemToRemove.style.transition = 'opacity 0.3s ease';
+            postItemToRemove.style.opacity = '0';
+            setTimeout(() => {
+              postItemToRemove.remove();
+            }, 300);
+          }
+
+        } catch (error) {
+          console.error('删除动态失败:', error);
+          alert(`删除失败: ${error.message}`);
+        }
+      }
+      // --- 启动函数 ---
+      // --- 页面初始化函数 (现在可以正常工作了) ---
+      async function initPage() {
+        loadingIndicator.classList.remove('hidden');
+        postListContainer.innerHTML = ''; // 先清空
+        noPostsMessage.classList.add('hidden');
+
+        try {
+          const response = await fetch(`http://localhost:3000/api/user/${profileUserId}`);
+          if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || '加载用户数据失败');
+          }
+          const data = await response.json();
+          currentUserData = data.userDetails; // 保存用户数据
+
+          // [调用修复后的函数]
+          populateProfile(currentUserData);
+          renderPosts(data.userPosts, currentUserData);
+          setupEditButton();
+
+        } catch (error) {
+          console.error('页面初始化失败:', error);
+          postListContainer.innerHTML = `<div class="text-center py-16 text-danger">${error.message}</div>`;
+        } finally {
+          loadingIndicator.classList.add('hidden');
+        }
+      }
+
+      // --- 启动 ---
+      initPage();
+      setupAllListeners(); // 启动所有事件监听器
+      setupEditProfileModal(); // [新增调用] 启动编辑个人资料弹窗的监听
+    });
+  </script>
+</body>
+
+</html>
